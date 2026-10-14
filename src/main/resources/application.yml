@@ -1,0 +1,45 @@
+spring:
+  application:
+    name: briefcase
+  # Local DB credentials and the JWT secret live in .env (git-ignored); see .env.example.
+  config:
+    import: optional:file:.env[.properties]
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/briefcase}
+    username: ${DB_USERNAME:briefcase_app}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+
+server:
+  port: 8080
+
+# ---- Application-specific settings ----
+billing:
+  # Firm takes this fraction of gross revenue first.
+  firm-cut-rate: 0.40
+  # Of what remains after the firm cut, the LEAD attorney gets this fraction.
+  lead-cut-rate: 0.40
+
+storage:
+  root-dir: ./uploads
+
+jwt:
+  # Base64-encoded 256-bit secret, required. Set JWT_SECRET in .env (openssl rand -base64 32).
+  secret: ${JWT_SECRET}
+  # Access-token lifetime in milliseconds (24h).
+  expiration: 86400000
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+    com.krishna.briefcase: debug
